@@ -1,0 +1,1666 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ERP Commercial — Moussa</title>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+/* ========== VARIABLES & RESET ========== */
+:root {
+  --bg: #0a0d14;
+  --bg2: #0f1420;
+  --bg3: #161c2d;
+  --surface: #1a2235;
+  --surface2: #1f2940;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.12);
+  --text: #e8edf5;
+  --text2: #8b95a8;
+  --text3: #5a6478;
+  --accent: #4f8ef7;
+  --accent2: #7c6af7;
+  --green: #2dd4a0;
+  --amber: #f5a623;
+  --red: #f25f5c;
+  --cyan: #38d9f5;
+  --gold: #e8c97a;
+  --font-head: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --radius: 14px;
+  --radius-sm: 8px;
+  --shadow: 0 8px 40px rgba(0,0,0,0.4);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:14px;scroll-behavior:smooth;}
+body{
+  font-family:var(--font-body);
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ========== ANIMATED BACKGROUND ========== */
+.bg-canvas{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 80% 60% at 20% 10%, rgba(79,142,247,0.08) 0%, transparent 60%),
+             radial-gradient(ellipse 60% 50% at 80% 80%, rgba(124,106,247,0.07) 0%, transparent 60%),
+             radial-gradient(ellipse 40% 40% at 50% 50%, rgba(45,212,160,0.04) 0%, transparent 70%);
+}
+.bg-grid{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                   linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size:40px 40px;
+  mask-image:radial-gradient(ellipse at center, rgba(0,0,0,0.6) 0%, transparent 70%);
+}
+
+/* ========== LAYOUT ========== */
+.app{position:relative;z-index:1;display:flex;min-height:100vh;}
+
+/* ========== SIDEBAR ========== */
+.sidebar{
+  width:240px;flex-shrink:0;
+  background:rgba(15,20,32,0.95);
+  backdrop-filter:blur(20px);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  position:fixed;height:100vh;top:0;left:0;z-index:200;
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+}
+.sidebar-logo{
+  padding:1.6rem 1.4rem 1.2rem;
+  display:flex;align-items:center;gap:.8rem;
+  border-bottom:1px solid var(--border);
+}
+.logo-mark{
+  width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;font-weight:800;color:#fff;
+  font-family:var(--font-head);
+  box-shadow:0 4px 16px rgba(79,142,247,0.4);
+}
+.logo-text{font-family:var(--font-head);font-size:1rem;font-weight:700;letter-spacing:.03em;}
+.logo-text span{color:var(--accent);}
+.logo-ver{font-size:.65rem;color:var(--text3);margin-top:.1rem;}
+
+.sidebar-section{
+  padding:.6rem .8rem .2rem 1.2rem;
+  font-size:.65rem;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--text3);margin-top:.6rem;
+}
+.nav-item{
+  display:flex;align-items:center;gap:.75rem;
+  padding:.65rem 1rem .65rem 1.2rem;
+  color:var(--text2);text-decoration:none;
+  font-size:.88rem;font-weight:400;
+  border-radius:0;cursor:pointer;
+  transition:all .18s;position:relative;
+  margin:.1rem .6rem;border-radius:var(--radius-sm);
+}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:var(--text);}
+.nav-item.active{
+  background:linear-gradient(90deg,rgba(79,142,247,0.15),rgba(79,142,247,0.05));
+  color:var(--accent);font-weight:500;
+}
+.nav-item.active::before{
+  content:'';position:absolute;left:0;top:20%;bottom:20%;
+  width:3px;border-radius:2px;background:var(--accent);
+}
+.nav-icon{font-size:1rem;width:20px;text-align:center;flex-shrink:0;}
+.nav-badge{
+  margin-left:auto;background:var(--red);color:#fff;
+  font-size:.65rem;font-weight:700;
+  padding:.15rem .45rem;border-radius:100px;min-width:18px;text-align:center;
+}
+.sidebar-footer{
+  margin-top:auto;padding:1rem 1.2rem;
+  border-top:1px solid var(--border);
+  font-size:.75rem;color:var(--text3);
+  display:flex;align-items:center;gap:.6rem;
+}
+.online-dot{
+  width:7px;height:7px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 8px rgba(45,212,160,0.6);
+  animation:pulse-dot 2s infinite;
+}
+@keyframes pulse-dot{0%,100%{opacity:1;}50%{opacity:.4;}}
+
+/* ========== TOPBAR ========== */
+.main{margin-left:240px;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{
+  background:rgba(10,13,20,0.8);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:.9rem 1.8rem;
+  display:flex;align-items:center;gap:1rem;
+  position:sticky;top:0;z-index:100;
+}
+.topbar-title{
+  font-family:var(--font-head);font-size:1rem;font-weight:700;flex:1;
+  background:linear-gradient(90deg,var(--text),var(--text2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.menu-btn{
+  display:none;background:none;border:none;color:var(--text);font-size:1.3rem;cursor:pointer;
+}
+.topbar-right{display:flex;align-items:center;gap:.8rem;}
+.date-chip{
+  font-size:.75rem;color:var(--text3);
+  background:var(--surface);border:1px solid var(--border);
+  padding:.35rem .8rem;border-radius:100px;
+}
+.alert-chip{
+  background:rgba(242,95,92,0.15);border:1px solid rgba(242,95,92,0.3);
+  color:var(--red);font-size:.75rem;font-weight:600;
+  padding:.35rem .8rem;border-radius:100px;cursor:pointer;
+  transition:all .2s;
+}
+.alert-chip:hover{background:rgba(242,95,92,0.25);}
+
+/* ========== CONTENT ========== */
+.page{padding:1.8rem;flex:1;display:none;animation:pageIn .3s ease;}
+.page.active{display:block;}
+@keyframes pageIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+/* ========== KPI CARDS ========== */
+.kpi-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:14px;margin-bottom:1.8rem;
+}
+.kpi-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1.2rem;
+  display:flex;align-items:center;gap:1rem;
+  transition:transform .2s,box-shadow .2s,border-color .2s;
+  cursor:default;position:relative;overflow:hidden;
+}
+.kpi-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.03),transparent);
+  pointer-events:none;
+}
+.kpi-card:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,0.3);border-color:var(--border2);}
+.kpi-icon{
+  width:46px;height:46px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.25rem;flex-shrink:0;
+}
+.kpi-val{
+  font-family:var(--font-head);font-size:1.5rem;font-weight:700;
+  line-height:1;color:var(--text);
+}
+.kpi-label{font-size:.75rem;color:var(--text2);margin-top:.25rem;}
+.kpi-trend{font-size:.7rem;margin-top:.2rem;}
+
+/* ========== SECTION TITLE ========== */
+.sec-head{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:1rem;flex-wrap:wrap;gap:.6rem;
+}
+.sec-title{
+  font-family:var(--font-head);font-size:.95rem;font-weight:700;
+  display:flex;align-items:center;gap:.5rem;
+}
+.sec-title .dot{
+  width:8px;height:8px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+}
+
+/* ========== CARDS ========== */
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
+}
+.card-head{
+  padding:.9rem 1.3rem;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;gap:.8rem;
+}
+.card-head h3{font-family:var(--font-head);font-size:.9rem;font-weight:700;color:var(--text);}
+.card-body{padding:1.2rem;}
+
+/* ========== TABLES ========== */
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+thead th{
+  padding:.65rem 1rem;
+  font-size:.7rem;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--text3);
+  background:rgba(255,255,255,0.03);
+  text-align:left;white-space:nowrap;
+}
+thead th:first-child{border-radius:var(--radius-sm) 0 0 var(--radius-sm);}
+thead th:last-child{border-radius:0 var(--radius-sm) var(--radius-sm) 0;}
+tbody td{
+  padding:.75rem 1rem;
+  border-bottom:1px solid var(--border);
+  font-size:.84rem;color:var(--text);vertical-align:middle;
+}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr{transition:background .15s;}
+tbody tr:hover td{background:rgba(255,255,255,0.03);}
+
+/* ========== BADGES ========== */
+.badge{
+  display:inline-flex;align-items:center;
+  padding:.2rem .65rem;border-radius:100px;
+  font-size:.7rem;font-weight:700;letter-spacing:.03em;white-space:nowrap;
+}
+.b-green{background:rgba(45,212,160,0.15);color:var(--green);border:1px solid rgba(45,212,160,0.25);}
+.b-red{background:rgba(242,95,92,0.15);color:var(--red);border:1px solid rgba(242,95,92,0.25);}
+.b-amber{background:rgba(245,166,35,0.15);color:var(--amber);border:1px solid rgba(245,166,35,0.25);}
+.b-blue{background:rgba(79,142,247,0.15);color:var(--accent);border:1px solid rgba(79,142,247,0.25);}
+.b-purple{background:rgba(124,106,247,0.15);color:var(--accent2);border:1px solid rgba(124,106,247,0.25);}
+.b-gray{background:rgba(255,255,255,0.06);color:var(--text2);border:1px solid var(--border);}
+
+/* ========== BUTTONS ========== */
+.btn{
+  display:inline-flex;align-items:center;gap:.4rem;
+  padding:.55rem 1.1rem;border-radius:var(--radius-sm);
+  font-family:var(--font-body);font-size:.84rem;font-weight:500;
+  cursor:pointer;border:none;transition:all .18s;
+  text-decoration:none;white-space:nowrap;
+}
+.btn-primary{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;box-shadow:0 4px 16px rgba(79,142,247,0.3);
+}
+.btn-primary:hover{box-shadow:0 6px 24px rgba(79,142,247,0.5);transform:translateY(-1px);}
+.btn-green{background:rgba(45,212,160,0.15);color:var(--green);border:1px solid rgba(45,212,160,0.3);}
+.btn-green:hover{background:rgba(45,212,160,0.25);}
+.btn-red{background:rgba(242,95,92,0.12);color:var(--red);border:1px solid rgba(242,95,92,0.25);}
+.btn-red:hover{background:rgba(242,95,92,0.22);}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border);}
+.btn-ghost:hover{background:var(--surface2);color:var(--text);border-color:var(--border2);}
+.btn-sm{padding:.3rem .7rem;font-size:.75rem;}
+.btn-icon{padding:.45rem;border-radius:var(--radius-sm);}
+
+/* ========== FORMS ========== */
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;}
+.form-group{display:flex;flex-direction:column;gap:.35rem;}
+.form-group label{font-size:.75rem;font-weight:600;color:var(--text2);letter-spacing:.04em;}
+.form-control{
+  padding:.65rem .9rem;
+  background:var(--bg3);border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);
+  font-family:var(--font-body);font-size:.88rem;color:var(--text);
+  transition:border .18s,box-shadow .18s;outline:none;
+}
+.form-control:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,142,247,0.12);}
+.form-control::placeholder{color:var(--text3);}
+.form-control[readonly]{background:rgba(255,255,255,0.03);cursor:default;}
+select.form-control option{background:var(--bg2);color:var(--text);}
+.full{grid-column:1/-1;}
+
+/* ========== MODAL ========== */
+.modal-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.65);backdrop-filter:blur(6px);
+  z-index:1000;align-items:center;justify-content:center;padding:1rem;
+}
+.modal-overlay.open{display:flex;animation:fadeIn .2s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.modal{
+  background:var(--bg2);
+  border:1px solid var(--border2);
+  border-radius:18px;
+  width:100%;max-width:520px;
+  max-height:90vh;overflow-y:auto;
+  box-shadow:0 24px 80px rgba(0,0,0,.6);
+  animation:modalIn .25s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes modalIn{from{opacity:0;transform:scale(.9) translateY(20px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.modal-head{
+  padding:1.2rem 1.5rem;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.modal-head h3{font-family:var(--font-head);font-size:1rem;font-weight:700;}
+.modal-close{
+  background:rgba(255,255,255,0.07);border:none;
+  width:28px;height:28px;border-radius:50%;
+  color:var(--text2);font-size:1rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .18s;
+}
+.modal-close:hover{background:rgba(255,255,255,0.12);color:var(--text);}
+.modal-body{padding:1.4rem 1.5rem;}
+.modal-foot{
+  padding:1rem 1.5rem;
+  border-top:1px solid var(--border);
+  display:flex;gap:.6rem;justify-content:flex-end;
+}
+
+/* ========== PROGRESS ========== */
+.prog-row{
+  display:flex;align-items:center;gap:.8rem;
+  padding:.55rem 0;border-bottom:1px solid var(--border);
+}
+.prog-row:last-child{border-bottom:none;}
+.prog-name{flex:1;font-size:.83rem;color:var(--text);}
+.prog-bar-wrap{
+  width:90px;height:5px;
+  background:rgba(255,255,255,0.07);border-radius:3px;overflow:hidden;
+}
+.prog-bar{height:100%;border-radius:3px;transition:width .6s ease;}
+.prog-green{background:linear-gradient(90deg,var(--green),#15c993);}
+.prog-amber{background:linear-gradient(90deg,var(--amber),#e8920a);}
+.prog-red{background:linear-gradient(90deg,var(--red),#e83e3b);}
+.prog-val{font-size:.75rem;color:var(--text3);width:32px;text-align:right;}
+
+/* ========== ALERT LIST ========== */
+.alert-row{
+  display:flex;align-items:flex-start;gap:.75rem;
+  padding:.75rem 1rem;border-bottom:1px solid var(--border);
+}
+.alert-row:last-child{border-bottom:none;}
+.alert-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.dot-red{background:var(--red);box-shadow:0 0 8px rgba(242,95,92,.5);}
+.dot-amber{background:var(--amber);box-shadow:0 0 8px rgba(245,166,35,.5);}
+.dot-green{background:var(--green);box-shadow:0 0 8px rgba(45,212,160,.5);}
+.alert-text{font-size:.83rem;flex:1;line-height:1.5;}
+.alert-text strong{color:var(--text);}
+.alert-text small{color:var(--text3);}
+
+/* ========== AVATAR ========== */
+.avatar{
+  width:34px;height:34px;border-radius:50%;
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:.75rem;font-weight:700;flex-shrink:0;
+}
+
+/* ========== TOAST ========== */
+.toast{
+  position:fixed;bottom:1.5rem;right:1.5rem;
+  padding:.8rem 1.3rem;border-radius:var(--radius-sm);
+  font-size:.85rem;font-weight:500;z-index:9999;
+  box-shadow:var(--shadow);animation:toastIn .25s ease;
+  max-width:320px;
+}
+@keyframes toastIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.toast-ok{background:#0d2a1e;color:var(--green);border:1px solid rgba(45,212,160,0.3);}
+.toast-err{background:#2a0d0d;color:var(--red);border:1px solid rgba(242,95,92,0.3);}
+
+/* ========== SEARCH ========== */
+.search-row{display:flex;gap:.6rem;margin-bottom:1rem;flex-wrap:wrap;}
+.search-input{
+  flex:1;min-width:180px;padding:.6rem .9rem;
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);color:var(--text);
+  font-family:var(--font-body);font-size:.85rem;outline:none;
+  transition:border .18s;
+}
+.search-input:focus{border-color:var(--accent);}
+.search-input::placeholder{color:var(--text3);}
+
+/* ========== PAGE HEADER ========== */
+.page-hd{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:1.5rem;flex-wrap:wrap;gap:.8rem;
+}
+.page-hd h1{
+  font-family:var(--font-head);font-size:1.4rem;font-weight:800;
+  background:linear-gradient(90deg,var(--text),var(--text2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+
+/* ========== GRID ========== */
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-bottom:1.4rem;}
+
+/* ========== EMPTY STATE ========== */
+.empty{text-align:center;padding:3rem 1rem;color:var(--text3);}
+.empty-ico{font-size:2.5rem;margin-bottom:.6rem;opacity:.5;}
+
+/* ========== QR SECTION ========== */
+.qr-box{
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:var(--radius);padding:1rem;
+  display:inline-flex;align-items:center;justify-content:center;
+}
+.scan-panel{max-width:460px;margin:0 auto;}
+#reader{width:100%!important;border-radius:var(--radius)!important;overflow:hidden!important;}
+#reader video{border-radius:var(--radius)!important;}
+.client-scan-result{
+  background:linear-gradient(135deg,rgba(45,212,160,0.08),rgba(79,142,247,0.06));
+  border:1px solid rgba(45,212,160,0.25);border-radius:var(--radius);
+  padding:1.2rem;animation:pageIn .3s ease;
+}
+.all-qr-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+  gap:12px;margin-top:.8rem;
+}
+.qr-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:1rem;text-align:center;
+  transition:all .2s;cursor:pointer;
+}
+.qr-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 24px rgba(79,142,247,0.15);}
+.qr-card canvas{width:100px!important;height:100px!important;}
+
+/* ========== TAB SWITCHER ========== */
+.tabs{display:flex;gap:6px;margin-bottom:1.2rem;flex-wrap:wrap;}
+.tab{
+  padding:.5rem 1.1rem;border-radius:100px;
+  font-size:.82rem;font-weight:500;cursor:pointer;
+  background:transparent;color:var(--text2);
+  border:1px solid var(--border);transition:all .18s;
+}
+.tab.active{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 4px 16px rgba(79,142,247,0.3);}
+.tab:hover:not(.active){background:var(--surface2);color:var(--text);}
+.tab-content{display:none;animation:pageIn .25s ease;}
+.tab-content.active{display:block;}
+
+/* ========== STAT MINI CHART ========== */
+.mini-chart{display:flex;align-items:flex-end;gap:3px;height:32px;}
+.mini-bar{
+  flex:1;min-width:6px;border-radius:3px 3px 0 0;
+  background:linear-gradient(180deg,var(--accent),var(--accent2));
+  opacity:.6;transition:opacity .2s;
+}
+.mini-bar:hover{opacity:1;}
+
+/* ========== RESPONSIVE ========== */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%);}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;}
+  .menu-btn{display:flex!important;}
+  .kpi-grid{grid-template-columns:repeat(2,1fr);}
+  .g2{grid-template-columns:1fr;}
+  .form-grid{grid-template-columns:1fr;}
+}
+
+/* ========== LOADING SCREEN ========== */
+#loading{
+  position:fixed;inset:0;z-index:9000;
+  background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;
+}
+.loading-logo{
+  font-family:var(--font-head);font-size:2rem;font-weight:800;
+  background:linear-gradient(135deg,var(--accent),var(--accent2),var(--green));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:shimmer 1.5s ease infinite;
+}
+@keyframes shimmer{0%,100%{filter:brightness(1);}50%{filter:brightness(1.4);}}
+.loading-bar-wrap{width:200px;height:3px;background:var(--surface);border-radius:2px;overflow:hidden;}
+.loading-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;animation:loadBar 1.5s ease-out forwards;}
+@keyframes loadBar{from{width:0;}to{width:100%;}}
+.loading-text{font-size:.8rem;color:var(--text3);}
+</style>
+</head>
+<body>
+
+<!-- LOADING SCREEN -->
+<div id="loading">
+  <div class="loading-logo">ERP Commercial</div>
+  <div class="loading-bar-wrap"><div class="loading-bar"></div></div>
+  <div class="loading-text">Initialisation du système...</div>
+</div>
+
+<div class="bg-canvas"></div>
+<div class="bg-grid"></div>
+
+<div class="app" id="app" style="display:none">
+
+<!-- ======= SIDEBAR ======= -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">E</div>
+    <div>
+      <div class="logo-text">ERP<span>Pro</span></div>
+      <div class="logo-ver">Moussa — v2.0</div>
+    </div>
+  </div>
+
+  <div class="sidebar-section">Principal</div>
+  <a class="nav-item active" onclick="nav('dashboard')">
+    <span class="nav-icon">◈</span> Tableau de bord
+  </a>
+
+  <div class="sidebar-section">Gestion</div>
+  <a class="nav-item" onclick="nav('clients')">
+    <span class="nav-icon">◉</span> Clients
+    <span class="nav-badge" id="badge-alertes" style="display:none">0</span>
+  </a>
+  <a class="nav-item" onclick="nav('produits')">
+    <span class="nav-icon">◧</span> Produits & Stock
+    <span class="nav-badge" id="badge-ruptures" style="display:none">0</span>
+  </a>
+  <a class="nav-item" onclick="nav('livraisons')">
+    <span class="nav-icon">◎</span> Livraisons
+  </a>
+  <a class="nav-item" onclick="nav('ventes')">
+    <span class="nav-icon">◈</span> Ventes
+  </a>
+
+  <div class="sidebar-section">Terrain</div>
+  <a class="nav-item" onclick="nav('scanner')">
+    <span class="nav-icon">▣</span> Scanner QR
+  </a>
+
+  <div class="sidebar-footer">
+    <div class="online-dot"></div>
+    <span>Système actif</span>
+    <button class="btn btn-ghost btn-sm" style="margin-left:auto;font-size:.7rem;padding:.2rem .5rem" onclick="if(confirm('Réinitialiser toutes les données ?')){DB.reset();location.reload();}">Reset</button>
+  </div>
+</aside>
+
+<!-- ======= MAIN ======= -->
+<div class="main">
+  <header class="topbar">
+    <button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+    <span class="topbar-title" id="page-title">Tableau de bord</span>
+    <div class="topbar-right">
+      <span class="date-chip" id="today-date"></span>
+      <span class="alert-chip" id="alert-chip" onclick="nav('clients')" style="display:none">⚠ 0 alertes</span>
+    </div>
+  </header>
+
+  <!-- ===== DASHBOARD ===== -->
+  <div class="page active" id="page-dashboard">
+    <div class="page-hd">
+      <h1>Bonjour 👋</h1>
+      <button class="btn btn-primary" onclick="nav('ventes');setTimeout(()=>openModal('modal-vente'),100)">+ Nouvelle vente</button>
+    </div>
+
+    <div class="kpi-grid" id="kpi-grid"></div>
+
+    <div class="g2">
+      <div class="card">
+        <div class="card-head"><h3>⚡ Alertes temps réel</h3></div>
+        <div id="dash-alertes"></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>💰 Dernières ventes</h3><a class="btn btn-ghost btn-sm" onclick="nav('ventes')">Voir tout →</a></div>
+        <div class="tbl-wrap" id="dash-ventes"></div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="card">
+        <div class="card-head"><h3>📦 État des stocks</h3><a class="btn btn-ghost btn-sm" onclick="nav('produits')">Gérer →</a></div>
+        <div style="padding:.4rem 1rem 1rem" id="dash-stocks"></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>🚚 Camions actifs</h3><a class="btn btn-ghost btn-sm" onclick="nav('livraisons')">Gérer →</a></div>
+        <div class="tbl-wrap" id="dash-camions"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CLIENTS ===== -->
+  <div class="page" id="page-clients">
+    <div class="page-hd">
+      <h1>👥 Clients</h1>
+      <button class="btn btn-primary" onclick="openModal('modal-add-client')">+ Nouveau client</button>
+    </div>
+    <div class="search-row">
+      <input class="search-input" id="search-client" placeholder="🔍 Rechercher..." oninput="renderClients()">
+      <select class="form-control" id="filter-solde" onchange="renderClients()" style="max-width:160px">
+        <option value="">Tous</option><option value="impaye">Avec impayés</option><option value="ok">À jour</option>
+      </select>
+      <button class="btn btn-ghost btn-sm" onclick="exportClients()">📥 Export CSV</button>
+    </div>
+    <div class="card">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Client</th><th>Téléphone</th><th>Adresse</th><th>Solde dû</th><th>Actions</th></tr></thead>
+          <tbody id="clients-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PRODUITS ===== -->
+  <div class="page" id="page-produits">
+    <div class="page-hd">
+      <h1>📦 Produits & Stock</h1>
+      <button class="btn btn-primary" onclick="openModal('modal-add-prod')">+ Nouveau produit</button>
+    </div>
+    <div class="kpi-grid" id="prod-kpis"></div>
+    <div class="search-row">
+      <input class="search-input" id="search-prod" placeholder="🔍 Rechercher..." oninput="renderProduits()">
+      <select class="form-control" id="filter-stock" onchange="renderProduits()" style="max-width:160px">
+        <option value="">Tous</option><option value="rupture">Rupture</option><option value="critique">Critique</option><option value="ok">OK</option>
+      </select>
+    </div>
+    <div class="card" style="margin-bottom:1rem">
+      <div class="card-head"><h3>📋 Catalogue</h3></div>
+      <div class="tbl-wrap">
+        <table><thead><tr><th>Produit</th><th>Catégorie</th><th>Prix</th><th>Stock</th><th>Seuil</th><th>État</th><th>Actions</th></tr></thead>
+        <tbody id="produits-tbody"></tbody></table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <h3>🏪 Stock chez les clients</h3>
+        <select class="form-control" id="filter-prod-client" onchange="renderStockClients()" style="max-width:200px;padding:.35rem .6rem;font-size:.8rem">
+          <option value="">Tous les produits</option>
+        </select>
+      </div>
+      <div class="tbl-wrap">
+        <table><thead><tr><th>Client</th><th>Produit</th><th>Quantité</th><th>Valeur</th></tr></thead>
+        <tbody id="stock-clients-tbody"></tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== LIVRAISONS ===== -->
+  <div class="page" id="page-livraisons">
+    <div class="page-hd">
+      <h1>🚚 Livraisons</h1>
+      <button class="btn btn-primary" onclick="openModal('modal-add-camion')">+ Nouveau camion</button>
+    </div>
+    <div id="camions-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-bottom:1.4rem"></div>
+    <div class="card" style="margin-bottom:1rem">
+      <div class="card-head"><h3>📦 Planifier un chargement</h3></div>
+      <div style="padding:1rem">
+        <div class="form-grid">
+          <div class="form-group"><label>Camion</label><select class="form-control" id="charg-camion"></select></div>
+          <div class="form-group"><label>Produit</label><select class="form-control" id="charg-produit" onchange="updateChargMax()"></select></div>
+          <div class="form-group"><label>Quantité<small id="charg-dispo" style="color:var(--text3);margin-left:.4rem"></small></label><input class="form-control" type="number" id="charg-qty" value="1" min="1"></div>
+        </div>
+        <div style="margin-top:1rem"><button class="btn btn-primary" onclick="ajouterChargement()">+ Ajouter au chargement</button></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>🗃 Historique chargements</h3></div>
+      <div class="tbl-wrap"><table><thead><tr><th>Camion</th><th>Produit</th><th>Chargé</th><th>Livré</th><th>Reste</th><th>Date</th><th>Action</th></tr></thead>
+      <tbody id="chargements-tbody"></tbody></table></div>
+    </div>
+  </div>
+
+  <!-- ===== VENTES ===== -->
+  <div class="page" id="page-ventes">
+    <div class="page-hd">
+      <h1>💰 Ventes</h1>
+      <button class="btn btn-primary" onclick="openModal('modal-vente')">+ Nouvelle vente</button>
+    </div>
+    <div class="kpi-grid" id="ventes-kpis"></div>
+    <div class="card" style="margin-bottom:1rem">
+      <div class="card-head"><h3>🔍 Filtres</h3></div>
+      <div style="padding:1rem">
+        <div class="form-grid">
+          <div class="form-group"><label>Client</label><select class="form-control" id="fv-client" onchange="renderVentes()"><option value="">Tous</option></select></div>
+          <div class="form-group"><label>Produit</label><select class="form-control" id="fv-produit" onchange="renderVentes()"><option value="">Tous</option></select></div>
+          <div class="form-group"><label>Date début</label><input class="form-control" type="date" id="fv-d1" onchange="renderVentes()"></div>
+          <div class="form-group"><label>Date fin</label><input class="form-control" type="date" id="fv-d2" onchange="renderVentes()"></div>
+        </div>
+        <div style="margin-top:.8rem;display:flex;gap:.6rem">
+          <button class="btn btn-ghost btn-sm" onclick="resetFiltresV()">🔄 Reset</button>
+          <button class="btn btn-ghost btn-sm" onclick="exportVentes()">📥 Export CSV</button>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:1rem">
+      <div class="card-head">
+        <h3>📋 Historique (<span id="ventes-count">0</span>)</h3>
+        <span id="ventes-total-f" style="font-size:.85rem;color:var(--green);font-weight:700"></span>
+      </div>
+      <div class="tbl-wrap"><table><thead><tr><th>Date</th><th>Client</th><th>Produit</th><th>Qté</th><th>Prix</th><th>Total</th><th>Vendeur</th><th></th></tr></thead>
+      <tbody id="ventes-tbody"></tbody></table></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>📊 Résumé par client</h3></div>
+      <div class="tbl-wrap"><table><thead><tr><th>Client</th><th>Nb ventes</th><th>Total</th><th>Solde dû</th></tr></thead>
+      <tbody id="resume-tbody"></tbody></table></div>
+    </div>
+  </div>
+
+  <!-- ===== SCANNER ===== -->
+  <div class="page" id="page-scanner">
+    <div class="page-hd"><h1>📱 Scanner QR</h1></div>
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('t-scan')">📷 Scanner</button>
+      <button class="tab" onclick="switchTab('t-gen')">🎨 Générer</button>
+      <button class="tab" onclick="switchTab('t-all');renderAllQR()">📋 Tous les QR</button>
+    </div>
+
+    <!-- SCANNER TAB -->
+    <div class="tab-content active" id="t-scan">
+      <div class="g2">
+        <div class="card">
+          <div class="card-head"><h3>📷 Caméra</h3></div>
+          <div style="padding:1rem">
+            <div id="reader"></div>
+            <div style="display:flex;gap:.6rem;margin-top:.8rem">
+              <button class="btn btn-primary" id="btn-start-scan" onclick="startScanner()">▶ Démarrer</button>
+              <button class="btn btn-red" id="btn-stop-scan" onclick="stopScanner()" style="display:none">⏹ Arrêter</button>
+            </div>
+            <p style="font-size:.75rem;color:var(--text3);margin-top:.5rem">Pointez vers le QR code d'un client</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>🔍 Résultat</h3></div>
+          <div style="padding:1rem" id="scan-result">
+            <div class="empty"><div class="empty-ico">📱</div>En attente du scan...</div>
+          </div>
+        </div>
+      </div>
+      <div id="vente-rapide-wrap" style="display:none;margin-top:1rem">
+        <div class="card">
+          <div class="card-head"><h3>🛒 Vente rapide</h3><span class="badge b-blue" id="vr-client-name"></span></div>
+          <div style="padding:1rem">
+            <div class="form-grid">
+              <div class="form-group"><label>Produit</label><select class="form-control" id="vr-produit" onchange="updateVR()"></select></div>
+              <div class="form-group"><label>Quantité</label><input class="form-control" type="number" id="vr-qty" value="1" min="1" oninput="updateVR()"></div>
+              <div class="form-group"><label>Prix unit.</label><input class="form-control" id="vr-prix" readonly></div>
+              <div class="form-group"><label>Total</label><input class="form-control" id="vr-total" readonly style="color:var(--green);font-weight:700"></div>
+            </div>
+            <div style="margin-top:1rem;display:flex;gap:.6rem">
+              <button class="btn btn-primary" onclick="validerVR()">✅ Valider la vente</button>
+              <button class="btn btn-ghost" onclick="document.getElementById('vente-rapide-wrap').style.display='none'">Annuler</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GENERATE TAB -->
+    <div class="tab-content" id="t-gen">
+      <div class="g2">
+        <div class="card">
+          <div class="card-head"><h3>🎨 Paramètres</h3></div>
+          <div style="padding:1rem">
+            <div class="form-grid">
+              <div class="form-group full">
+                <label>Client existant</label>
+                <select class="form-control" id="gen-client" onchange="genFromClient()"><option value="">— Choisir —</option></select>
+              </div>
+              <div class="form-group full" style="text-align:center;color:var(--text3);font-size:.8rem;padding:.2rem 0">— ou saisir manuellement —</div>
+              <div class="form-group full">
+                <label>Texte / données à encoder</label>
+                <input class="form-control" type="text" id="gen-text" placeholder="URL, texte, données..." oninput="genQRPreview()">
+              </div>
+              <div class="form-group">
+                <label>Taille</label>
+                <select class="form-control" id="gen-size" onchange="genQRPreview()">
+                  <option value="160">160px</option><option value="200" selected>200px</option>
+                  <option value="250">250px</option><option value="300">300px</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Couleur</label>
+                <input class="form-control" type="color" id="gen-color" value="#4f8ef7" onchange="genQRPreview()">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>👁 Aperçu</h3></div>
+          <div style="padding:2rem;text-align:center" id="gen-preview">
+            <div class="empty"><div class="empty-ico">🎨</div>Sélectionnez un client</div>
+          </div>
+          <div style="padding:.8rem 1.2rem;border-top:1px solid var(--border);display:flex;gap:.6rem;justify-content:center" id="gen-actions" style="display:none">
+            <button class="btn btn-primary btn-sm" id="btn-dl-qr" onclick="downloadGenQR()" style="display:none">💾 Télécharger</button>
+            <button class="btn btn-ghost btn-sm" id="btn-print-qr" onclick="printGenQR()" style="display:none">🖨️ Imprimer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALL QR TAB -->
+    <div class="tab-content" id="t-all">
+      <div class="card">
+        <div class="card-head">
+          <h3>📋 QR Codes — tous les clients</h3>
+          <button class="btn btn-primary btn-sm" onclick="printAllQR()">🖨️ Tout imprimer</button>
+        </div>
+        <div style="padding:1rem">
+          <p style="font-size:.78rem;color:var(--text3);margin-bottom:.8rem">Cliquez sur un QR pour le télécharger</p>
+          <div class="all-qr-grid" id="all-qr-grid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end main -->
+</div><!-- end app -->
+
+<!-- ============ MODALS ============ -->
+
+<!-- ADD CLIENT -->
+<div class="modal-overlay" id="modal-add-client">
+  <div class="modal">
+    <div class="modal-head"><h3>➕ Nouveau client</h3><button class="modal-close" onclick="closeModal('modal-add-client')">×</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group full"><label>Nom de la supérette *</label><input class="form-control" id="nc-nom" placeholder="Ex: Supérette Al Baraka"></div>
+        <div class="form-group"><label>Téléphone *</label><input class="form-control" id="nc-tel" placeholder="0550 XXX XXX"></div>
+        <div class="form-group"><label>Wilaya</label><input class="form-control" id="nc-wilaya" value="Sétif"></div>
+        <div class="form-group full"><label>Adresse</label><input class="form-control" id="nc-adresse" placeholder="Rue, quartier, commune"></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('modal-add-client')">Annuler</button><button class="btn btn-primary" onclick="addClient()">Créer le client</button></div>
+  </div>
+</div>
+
+<!-- CLIENT FICHE -->
+<div class="modal-overlay" id="modal-fiche">
+  <div class="modal" style="max-width:620px">
+    <div class="modal-head"><h3 id="fiche-title">Fiche client</h3><button class="modal-close" onclick="closeModal('modal-fiche')">×</button></div>
+    <div class="modal-body" id="fiche-body"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('modal-fiche')">Fermer</button>
+      <button class="btn btn-ghost" onclick="ouvrirPaiement(currentClientId)">💳 Paiement</button>
+      <button class="btn btn-primary" onclick="closeModal('modal-fiche');openModal('modal-vente');prefillVenteClient(currentClientId)">🛒 Nouvelle vente</button>
+    </div>
+  </div>
+</div>
+
+<!-- QR MODAL -->
+<div class="modal-overlay" id="modal-qr">
+  <div class="modal" style="max-width:340px">
+    <div class="modal-head"><h3>📱 QR Code client</h3><button class="modal-close" onclick="closeModal('modal-qr')">×</button></div>
+    <div class="modal-body">
+      <div style="text-align:center">
+        <p id="qr-modal-nom" style="font-family:var(--font-head);font-size:1rem;font-weight:700;margin-bottom:1rem"></p>
+        <div class="qr-box" style="display:inline-flex;margin-bottom:1rem"><canvas id="qr-modal-canvas"></canvas></div>
+        <p style="font-size:.75rem;color:var(--text3)">Scannez pour accéder à la fiche</p>
+        <div style="display:flex;gap:.6rem;justify-content:center;margin-top:1rem">
+          <button class="btn btn-primary btn-sm" onclick="downloadModalQR()">💾 PNG</button>
+          <button class="btn btn-ghost btn-sm" onclick="printModalQR()">🖨️ Imprimer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAIEMENT -->
+<div class="modal-overlay" id="modal-paiement">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-head"><h3>💳 Enregistrer un paiement</h3><button class="modal-close" onclick="closeModal('modal-paiement')">×</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group full"><label>Client</label><input class="form-control" id="p-client-nom" readonly><input type="hidden" id="p-client-id"></div>
+        <div class="form-group full"><label>Solde actuel</label><input class="form-control" id="p-solde" readonly style="color:var(--red);font-weight:700"></div>
+        <div class="form-group full"><label>Montant reçu (DA) *</label><input class="form-control" type="number" id="p-montant" placeholder="Ex: 5000" min="1"></div>
+        <div class="form-group full"><label>Note</label><input class="form-control" id="p-note" placeholder="Espèces, virement..."></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('modal-paiement')">Annuler</button><button class="btn btn-green" onclick="validerPaiement()">✅ Valider</button></div>
+  </div>
+</div>
+
+<!-- VENTE -->
+<div class="modal-overlay" id="modal-vente">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-head"><h3>🛒 Nouvelle vente</h3><button class="modal-close" onclick="closeModal('modal-vente')">×</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group full"><label>Client *</label><select class="form-control" id="mv-client"></select></div>
+        <div class="form-group full"><label>Produit *</label><select class="form-control" id="mv-produit" onchange="updateMV()"></select></div>
+        <div class="form-group"><label>Quantité *</label><input class="form-control" type="number" id="mv-qty" value="1" min="1" oninput="updateMV()"></div>
+        <div class="form-group"><label>Prix unit.</label><input class="form-control" id="mv-prix" readonly></div>
+        <div class="form-group full"><label>Total</label><input class="form-control" id="mv-total" readonly style="color:var(--green);font-weight:700"></div>
+        <div class="form-group full"><label>Vendeur</label><input class="form-control" id="mv-vendeur" value="Admin"></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('modal-vente')">Annuler</button><button class="btn btn-primary" onclick="validerVente()">✅ Valider</button></div>
+  </div>
+</div>
+
+<!-- ADD PRODUIT -->
+<div class="modal-overlay" id="modal-add-prod">
+  <div class="modal">
+    <div class="modal-head"><h3>➕ Nouveau produit</h3><button class="modal-close" onclick="closeModal('modal-add-prod')">×</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group full"><label>Nom *</label><input class="form-control" id="pp-nom" placeholder="Ex: Eau minérale 1,5L"></div>
+        <div class="form-group"><label>Catégorie</label><select class="form-control" id="pp-cat"><option>Boissons</option><option>Laitier</option><option>Épicerie</option><option>Nettoyage</option><option>Autre</option></select></div>
+        <div class="form-group"><label>Unité</label><select class="form-control" id="pp-unite"><option>bouteille</option><option>brique</option><option>paquet</option><option>boîte</option><option>pack</option><option>kg</option></select></div>
+        <div class="form-group"><label>Prix (DA) *</label><input class="form-control" type="number" id="pp-prix" min="0"></div>
+        <div class="form-group"><label>Stock initial</label><input class="form-control" type="number" id="pp-stock" value="0" min="0"></div>
+        <div class="form-group full"><label>Seuil alerte</label><input class="form-control" type="number" id="pp-seuil" value="20" min="0"></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('modal-add-prod')">Annuler</button><button class="btn btn-primary" onclick="addProduit()">Créer</button></div>
+  </div>
+</div>
+
+<!-- MODIFIER STOCK -->
+<div class="modal-overlay" id="modal-stock">
+  <div class="modal" style="max-width:360px">
+    <div class="modal-head"><h3>📦 Modifier stock</h3><button class="modal-close" onclick="closeModal('modal-stock')">×</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group full"><label>Produit</label><input class="form-control" id="ms-nom" readonly><input type="hidden" id="ms-id"></div>
+        <div class="form-group full"><label>Stock actuel</label><input class="form-control" id="ms-actuel" readonly></div>
+        <div class="form-group"><label>Opération</label><select class="form-control" id="ms-op"><option value="add">+ Ajouter</option><option value="remove">− Retirer (casse)</option><option value="set">= Définir</option></select></div>
+        <div class="form-group"><label>Quantité</label><input class="form-control" type="number" id="ms-qty" value="0" min="0"></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('modal-stock')">Annuler</button><button class="btn btn-primary" onclick="modifierStock()">✅ Appliquer</button></div>
+  </div>
+</div>
+
+<!-- ADD CAMION -->
+<div class="modal-overlay" id="modal-add-camion">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-head"><h3>🚚 Nouveau camion</h3><button class="modal-close" onclick="closeModal('modal-add-camion')">×</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group"><label>Nom *</label><input class="form-control" id="cc-nom" placeholder="Camion C"></div>
+        <div class="form-group"><label>Immatriculation</label><input class="form-control" id="cc-immat" placeholder="19-003-16"></div>
+        <div class="form-group"><label>Chauffeur *</label><input class="form-control" id="cc-chauf" placeholder="Prénom Nom"></div>
+        <div class="form-group"><label>Téléphone</label><input class="form-control" id="cc-tel" placeholder="0550 XXX XXX"></div>
+        <div class="form-group full"><label>Capacité (unités)</label><input class="form-control" type="number" id="cc-cap" value="800" min="1"></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('modal-add-camion')">Annuler</button><button class="btn btn-primary" onclick="addCamion()">Créer</button></div>
+  </div>
+</div>
+
+<!-- ============ JAVASCRIPT ============ -->
+<script>
+// =================== DATABASE ===================
+const DB = {
+  init(){if(!localStorage.getItem('erp_v2')){this.seed();localStorage.setItem('erp_v2','1');}},
+  seed(){
+    this.save('clients',[
+      {id:1,nom:'Supérette Al Amel',telephone:'0550 123 456',adresse:'Rue Didouche Mourad, Sétif',wilaya:'Sétif',solde:4500,created_at:td()},
+      {id:2,nom:'Marché El Wafa',telephone:'0661 234 567',adresse:'Avenue 8 Mai, Ain Arnat',wilaya:'Sétif',solde:0,created_at:td()},
+      {id:3,nom:'Épicerie Badr',telephone:'0770 345 678',adresse:'Cité El Bez, El Eulma',wilaya:'Sétif',solde:12500,created_at:td()},
+      {id:4,nom:'Supérette Nour',telephone:'0550 456 789',adresse:'BD Amirouche, Sétif',wilaya:'Sétif',solde:0,created_at:td()},
+      {id:5,nom:'Alimentation Salam',telephone:'0661 567 890',adresse:'Quartier Université, Sétif',wilaya:'Sétif',solde:3200,created_at:td()},
+    ]);
+    this.save('produits',[
+      {id:1,nom:'Eau minérale 1,5L',prix:35,stock_total:480,stock_minimum:50,unite:'bouteille',categorie:'Boissons'},
+      {id:2,nom:"Jus d'orange 1L",prix:85,stock_total:240,stock_minimum:30,unite:'bouteille',categorie:'Boissons'},
+      {id:3,nom:'Lait UHT 1L',prix:90,stock_total:360,stock_minimum:40,unite:'brique',categorie:'Laitier'},
+      {id:4,nom:'Huile végétale 1L',prix:220,stock_total:200,stock_minimum:20,unite:'bouteille',categorie:'Épicerie'},
+      {id:5,nom:'Yaourt × 4',prix:65,stock_total:160,stock_minimum:20,unite:'pack',categorie:'Laitier'},
+      {id:6,nom:'Café 250g',prix:350,stock_total:0,stock_minimum:10,unite:'paquet',categorie:'Épicerie'},
+      {id:7,nom:'Sucre 1kg',prix:120,stock_total:300,stock_minimum:30,unite:'paquet',categorie:'Épicerie'},
+      {id:8,nom:'Farine 1kg',prix:75,stock_total:250,stock_minimum:25,unite:'paquet',categorie:'Épicerie'},
+    ]);
+    this.save('stocks_clients',[
+      {id:1,client_id:1,produit_id:1,quantite:8},{id:2,client_id:1,produit_id:2,quantite:2},{id:3,client_id:1,produit_id:3,quantite:24},
+      {id:4,client_id:2,produit_id:1,quantite:48},{id:5,client_id:2,produit_id:4,quantite:12},{id:6,client_id:3,produit_id:2,quantite:18},
+      {id:7,client_id:3,produit_id:5,quantite:16},{id:8,client_id:4,produit_id:1,quantite:36},{id:9,client_id:4,produit_id:3,quantite:20},
+      {id:10,client_id:5,produit_id:7,quantite:15},
+    ]);
+    this.save('ventes',[
+      {id:1,client_id:1,produit_id:1,quantite:48,prix_unitaire:35,date:td(),vendeur:'Admin',note:''},
+      {id:2,client_id:2,produit_id:2,quantite:24,prix_unitaire:85,date:td(),vendeur:'Admin',note:''},
+      {id:3,client_id:3,produit_id:3,quantite:12,prix_unitaire:90,date:yd(),vendeur:'Admin',note:''},
+      {id:4,client_id:1,produit_id:4,quantite:6,prix_unitaire:220,date:yd(),vendeur:'Admin',note:''},
+    ]);
+    this.save('paiements',[
+      {id:1,client_id:2,montant:8000,date:td(),note:'Espèces'},
+      {id:2,client_id:4,montant:5500,date:yd(),note:'Virement'},
+    ]);
+    this.save('camions',[
+      {id:1,nom:'Camion A',immatriculation:'19-001-16',chauffeur:'Karim Boudali',telephone:'0550 111 222',statut:'en_route',capacite:1000},
+      {id:2,nom:'Camion B',immatriculation:'19-002-16',chauffeur:'Yacine Hamdi',telephone:'0661 333 444',statut:'disponible',capacite:800},
+    ]);
+    this.save('chargements',[
+      {id:1,camion_id:1,produit_id:1,quantite:120,date:td(),livree:84},
+      {id:2,camion_id:1,produit_id:2,quantite:60,date:td(),livree:48},
+      {id:3,camion_id:1,produit_id:3,quantite:40,date:td(),livree:30},
+    ]);
+  },
+  save(t,d){localStorage.setItem('erp_'+t,JSON.stringify(d));},
+  get(t){const r=localStorage.getItem('erp_'+t);return r?JSON.parse(r):[];},
+  nextId(t){const r=this.get(t);return r.length?Math.max(...r.map(x=>x.id))+1:1;},
+  insert(t,row){const r=this.get(t);row.id=this.nextId(t);r.push(row);this.save(t,r);return row;},
+  update(t,id,u){const r=this.get(t);const i=r.findIndex(x=>x.id===id);if(i!==-1){r[i]={...r[i],...u};this.save(t,r);return r[i];}},
+  delete(t,id){this.save(t,this.get(t).filter(x=>x.id!==id));},
+  find(t,id){return this.get(t).find(x=>x.id===parseInt(id));},
+  ajouterVente(cid,pid,qty,vendeur='Admin'){
+    const p=this.find('produits',pid);
+    if(!p)return{error:'Produit introuvable'};
+    if(p.stock_total<qty)return{error:`Stock insuffisant (${p.stock_total} dispo)`};
+    const v=this.insert('ventes',{client_id:+cid,produit_id:+pid,quantite:+qty,prix_unitaire:p.prix,date:td(),vendeur,note:''});
+    this.update('produits',p.id,{stock_total:p.stock_total-qty});
+    const stocks=this.get('stocks_clients');
+    const sc=stocks.find(s=>s.client_id===+cid&&s.produit_id===+pid);
+    if(sc)this.update('stocks_clients',sc.id,{quantite:sc.quantite+(+qty)});
+    else this.insert('stocks_clients',{client_id:+cid,produit_id:+pid,quantite:+qty});
+    const c=this.find('clients',cid);
+    this.update('clients',c.id,{solde:(c.solde||0)+(qty*p.prix)});
+    return{success:true,vente:v,montant:qty*p.prix};
+  },
+  enregistrerPaiement(cid,montant,note){
+    const c=this.find('clients',cid);
+    if(!c)return{error:'Client introuvable'};
+    const paiement=this.insert('paiements',{client_id:+cid,montant:+montant,date:td(),note});
+    this.update('clients',c.id,{solde:Math.max(0,(c.solde||0)-(+montant))});
+    return{success:true,paiement};
+  },
+  getAlertes(){
+    const a=[];
+    this.get('produits').forEach(p=>{
+      if(p.stock_total===0)a.push({type:'red',msg:`Rupture : <strong>${p.nom}</strong>`,detail:'Stock épuisé'});
+      else if(p.stock_total<=p.stock_minimum)a.push({type:'amber',msg:`Critique : <strong>${p.nom}</strong>`,detail:`${p.stock_total} unités`});
+    });
+    this.get('clients').forEach(c=>{
+      if(c.solde>10000)a.push({type:'amber',msg:`Créance élevée : <strong>${c.nom}</strong>`,detail:fDA(c.solde)});
+    });
+    return a;
+  },
+  getStockClient(cid){
+    return this.get('stocks_clients').filter(s=>s.client_id===+cid).map(s=>({...s,produit:this.find('produits',s.produit_id)}));
+  },
+  getHistoClient(cid){
+    return this.get('ventes').filter(v=>v.client_id===+cid).map(v=>({...v,produit:this.find('produits',v.produit_id),total:v.quantite*v.prix_unitaire})).reverse();
+  },
+  getPaiementsClient(cid){return this.get('paiements').filter(p=>p.client_id===+cid).reverse();},
+  ventesToday(){return this.get('ventes').filter(v=>v.date===td()).reduce((s,v)=>s+v.quantite*v.prix_unitaire,0);},
+  reset(){['clients','produits','stocks_clients','ventes','paiements','camions','chargements'].forEach(t=>localStorage.removeItem('erp_'+t));localStorage.removeItem('erp_v2');this.init();}
+};
+
+// =================== UTILS ===================
+function td(){return new Date().toISOString().split('T')[0];}
+function yd(){const d=new Date();d.setDate(d.getDate()-1);return d.toISOString().split('T')[0];}
+function fDA(n){return(+n).toLocaleString('fr-DZ')+' DA';}
+function fDate(d){if(!d)return'';const[y,m,j]=d.split('-');return`${j}/${m}/${y}`;}
+function avColors(id){const c=[['rgba(79,142,247,.2)','var(--accent)'],['rgba(45,212,160,.2)','var(--green)'],['rgba(245,166,35,.2)','var(--amber)'],['rgba(124,106,247,.2)','var(--accent2)'],['rgba(56,217,245,.2)','var(--cyan)']];return c[(id-1)%c.length];}
+function initials(n){return n.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();}
+function toast(msg,type='ok'){
+  document.querySelectorAll('.toast').forEach(t=>t.remove());
+  const t=document.createElement('div');
+  t.className=`toast toast-${type}`;t.textContent=msg;
+  document.body.appendChild(t);setTimeout(()=>t.remove(),3000);
+}
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+
+let currentClientId=null;
+let scannerInst=null;
+let genCanvas=null;
+let genClientNom='';
+let scannedClientId=null;
+
+// =================== NAVIGATION ===================
+const PAGE_TITLES={'dashboard':'Tableau de bord','clients':'Clients','produits':'Produits & Stock','livraisons':'Livraisons','ventes':'Ventes','scanner':'Scanner QR'};
+function nav(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>{if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes("'"+page+"'"))n.classList.add('active');});
+  document.getElementById('page-title').textContent=PAGE_TITLES[page]||page;
+  if(page==='dashboard')renderDashboard();
+  if(page==='clients')renderClients();
+  if(page==='produits')renderProduits();
+  if(page==='livraisons')renderLivraisons();
+  if(page==='ventes')renderVentesPage();
+  if(page==='scanner')populateGenSel();
+  document.getElementById('sidebar').classList.remove('open');
+}
+
+// =================== DASHBOARD ===================
+function renderDashboard(){
+  const clients=DB.get('clients');
+  const produits=DB.get('produits');
+  const alertes=DB.getAlertes();
+  const ventesToday=DB.ventesToday();
+  const ruptures=produits.filter(p=>p.stock_total===0).length;
+
+  // Badges sidebar
+  if(alertes.length>0){document.getElementById('badge-alertes').style.display='';document.getElementById('badge-alertes').textContent=alertes.length;}
+  if(ruptures>0){document.getElementById('badge-ruptures').style.display='';document.getElementById('badge-ruptures').textContent=ruptures;}
+  const ac=document.getElementById('alert-chip');
+  if(alertes.length>0){ac.style.display='';ac.textContent=`⚠ ${alertes.length} alertes`;}
+
+  // KPIs
+  const kpis=[
+    {icon:'👥',val:clients.length,label:'Clients actifs',bg:'rgba(79,142,247,.15)',color:'var(--accent)'},
+    {icon:'📦',val:produits.length,label:'Produits',bg:'rgba(45,212,160,.12)',color:'var(--green)'},
+    {icon:'💰',val:fDA(ventesToday),label:"Ventes aujourd'hui",bg:'rgba(245,166,35,.12)',color:'var(--amber)'},
+    {icon:'⚠️',val:alertes.length,label:'Alertes actives',bg:'rgba(242,95,92,.12)',color:'var(--red)'},
+  ];
+  document.getElementById('kpi-grid').innerHTML=kpis.map(k=>`
+    <div class="kpi-card">
+      <div class="kpi-icon" style="background:${k.bg};color:${k.color}">${k.icon}</div>
+      <div><div class="kpi-val" style="color:${k.color}">${k.val}</div><div class="kpi-label">${k.label}</div></div>
+    </div>`).join('');
+
+  // Alertes
+  const al=document.getElementById('dash-alertes');
+  if(alertes.length===0){al.innerHTML='<div class="empty"><div class="empty-ico">✅</div>Aucune alerte</div>';}
+  else al.innerHTML=alertes.map(a=>`<div class="alert-row"><div class="alert-dot dot-${a.type}"></div><div class="alert-text">${a.msg}<br><small>${a.detail}</small></div></div>`).join('');
+
+  // Dernières ventes
+  const dv=DB.get('ventes').slice().reverse().slice(0,5);
+  const dvEl=document.getElementById('dash-ventes');
+  if(dv.length===0){dvEl.innerHTML='<div class="empty">Aucune vente</div>';}
+  else{
+    dvEl.innerHTML='<table><thead><tr><th>Client</th><th>Produit</th><th>Total</th></tr></thead><tbody>'+
+    dv.map(v=>{const c=DB.find('clients',v.client_id);const p=DB.find('produits',v.produit_id);
+    return`<tr><td style="font-size:.8rem">${c?c.nom:'?'}</td><td style="font-size:.8rem">${p?p.nom:'?'}</td><td><span class="badge b-green">${fDA(v.quantite*v.prix_unitaire)}</span></td></tr>`;}).join('')+'</tbody></table>';
+  }
+
+  // Stocks
+  const so=document.getElementById('dash-stocks');
+  so.innerHTML=produits.map(p=>{
+    const pct=Math.min(100,p.stock_minimum>0?Math.round(p.stock_total/(p.stock_minimum*5)*100):80);
+    const cls=p.stock_total===0?'prog-red':p.stock_total<=p.stock_minimum?'prog-amber':'prog-green';
+    return`<div class="prog-row"><span class="prog-name">${p.nom}</span><div class="prog-bar-wrap"><div class="prog-bar ${cls}" style="width:${pct}%"></div></div><span class="prog-val">${p.stock_total}</span></div>`;
+  }).join('');
+
+  // Camions
+  const cam=DB.get('camions');
+  const camEl=document.getElementById('dash-camions');
+  camEl.innerHTML='<table><thead><tr><th>Camion</th><th>Chauffeur</th><th>Statut</th></tr></thead><tbody>'+
+  cam.map(c=>{const b=c.statut==='en_route'?'b-blue':c.statut==='terminé'?'b-green':'b-gray';const l=c.statut==='en_route'?'En route':c.statut==='terminé'?'Terminé':'Disponible';
+  return`<tr><td style="font-weight:600;font-size:.84rem">${c.nom}</td><td style="font-size:.8rem">${c.chauffeur}</td><td><span class="badge ${b}">${l}</span></td></tr>`;}).join('')+'</tbody></table>';
+}
+
+// =================== CLIENTS ===================
+function renderClients(){
+  const q=(document.getElementById('search-client').value||'').toLowerCase();
+  const f=document.getElementById('filter-solde').value;
+  let clients=DB.get('clients');
+  if(q)clients=clients.filter(c=>c.nom.toLowerCase().includes(q)||(c.telephone||'').includes(q));
+  if(f==='impaye')clients=clients.filter(c=>c.solde>0);
+  if(f==='ok')clients=clients.filter(c=>!c.solde||c.solde===0);
+  const tbody=document.getElementById('clients-tbody');
+  if(clients.length===0){tbody.innerHTML='<tr><td colspan="5"><div class="empty"><div class="empty-ico">👥</div>Aucun client</div></td></tr>';return;}
+  const [bg,col]=avColors(1);
+  tbody.innerHTML=clients.map(c=>{
+    const [abg,acol]=avColors(c.id);
+    const sb=c.solde>0?`<span class="badge b-red">${fDA(c.solde)}</span>`:`<span class="badge b-green">À jour</span>`;
+    return`<tr>
+      <td><div style="display:flex;align-items:center;gap:.6rem">
+        <div class="avatar" style="background:${abg};color:${acol}">${initials(c.nom)}</div>
+        <div><div style="font-weight:600;font-size:.86rem">${c.nom}</div><div style="font-size:.72rem;color:var(--text3)">ID #${String(c.id).padStart(3,'0')}</div></div>
+      </div></td>
+      <td style="font-size:.83rem">${c.telephone||'—'}</td>
+      <td style="font-size:.78rem;color:var(--text2)">${c.adresse||'—'}</td>
+      <td>${sb}</td>
+      <td><div style="display:flex;gap:.4rem;flex-wrap:wrap">
+        <button class="btn btn-ghost btn-sm" onclick="ouvrirFiche(${c.id})">📋</button>
+        <button class="btn btn-ghost btn-sm" onclick="ouvrirQR(${c.id})">📱</button>
+        ${c.solde>0?`<button class="btn btn-ghost btn-sm" style="color:var(--amber)" onclick="ouvrirPaiement(${c.id})">💳</button>`:''}
+        <button class="btn btn-red btn-sm btn-icon" onclick="if(confirm('Supprimer ?')){DB.delete('clients',${c.id});renderClients();}">×</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+function addClient(){
+  const nom=document.getElementById('nc-nom').value.trim();
+  const tel=document.getElementById('nc-tel').value.trim();
+  if(!nom||!tel){toast('Nom et téléphone requis','err');return;}
+  DB.insert('clients',{nom,telephone:tel,adresse:document.getElementById('nc-adresse').value,wilaya:document.getElementById('nc-wilaya').value,solde:0,created_at:td()});
+  closeModal('modal-add-client');toast('Client créé !');
+  ['nc-nom','nc-tel','nc-adresse'].forEach(id=>document.getElementById(id).value='');
+  renderClients();
+}
+function ouvrirFiche(id){
+  currentClientId=id;
+  const c=DB.find('clients',id);
+  document.getElementById('fiche-title').textContent='📋 '+c.nom;
+  const stocks=DB.getStockClient(id);
+  const histo=DB.getHistoClient(id).slice(0,6);
+  const paies=DB.getPaiementsClient(id).slice(0,4);
+  const [abg,acol]=avColors(c.id);
+  let html=`<div style="display:flex;align-items:center;gap:.9rem;margin-bottom:1.2rem;padding:.8rem;background:var(--surface);border-radius:var(--radius-sm);border:1px solid var(--border)">
+    <div class="avatar" style="width:44px;height:44px;font-size:.95rem;background:${abg};color:${acol}">${initials(c.nom)}</div>
+    <div><div style="font-weight:700;font-size:.95rem">${c.nom}</div>
+    <div style="font-size:.78rem;color:var(--text2);margin-top:.1rem">📞 ${c.telephone||'—'} &nbsp;|&nbsp; 📍 ${c.adresse||'—'}</div>
+    <div style="margin-top:.4rem">${c.solde>0?`<span class="badge b-red">Solde dû : ${fDA(c.solde)}</span>`:'<span class="badge b-green">Compte à jour</span>'}</div>
+    </div></div>`;
+  html+=`<div style="font-size:.75rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem">📦 Stock actuel</div>`;
+  if(stocks.length===0)html+='<p style="font-size:.8rem;color:var(--text3);margin-bottom:1rem">Aucun stock</p>';
+  else html+='<div style="margin-bottom:1rem">'+stocks.map(s=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:.4rem 0;border-bottom:1px solid var(--border);font-size:.83rem"><span>${s.produit?s.produit.nom:'?'}</span><span class="badge ${s.quantite<10?'b-amber':'b-blue'}">${s.quantite} u.</span></div>`).join('')+'</div>';
+  html+=`<div style="font-size:.75rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem">🕐 Historique ventes</div>`;
+  if(histo.length===0)html+='<p style="font-size:.8rem;color:var(--text3);margin-bottom:1rem">Aucune vente</p>';
+  else html+='<table style="width:100%;border-collapse:collapse;margin-bottom:1rem"><thead><tr><th style="font-size:.7rem;color:var(--text3);padding:.4rem .6rem;text-align:left">Date</th><th style="font-size:.7rem;color:var(--text3);padding:.4rem .6rem;text-align:left">Produit</th><th style="font-size:.7rem;color:var(--text3);padding:.4rem .6rem;text-align:left">Qté</th><th style="font-size:.7rem;color:var(--text3);padding:.4rem .6rem;text-align:left">Total</th></tr></thead><tbody>'+histo.map(v=>`<tr><td style="font-size:.78rem;padding:.35rem .6rem;border-bottom:1px solid var(--border)">${fDate(v.date)}</td><td style="font-size:.8rem;padding:.35rem .6rem;border-bottom:1px solid var(--border)">${v.produit?v.produit.nom:'?'}</td><td style="padding:.35rem .6rem;border-bottom:1px solid var(--border)">${v.quantite}</td><td style="padding:.35rem .6rem;border-bottom:1px solid var(--border)"><span class="badge b-green">${fDA(v.total)}</span></td></tr>`).join('')+'</tbody></table>';
+  html+=`<div style="font-size:.75rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem">💳 Paiements</div>`;
+  if(paies.length===0)html+='<p style="font-size:.8rem;color:var(--text3)">Aucun paiement</p>';
+  else html+='<table style="width:100%;border-collapse:collapse"><thead><tr><th style="font-size:.7rem;color:var(--text3);padding:.4rem .6rem;text-align:left">Date</th><th style="font-size:.7rem;color:var(--text3);padding:.4rem .6rem;text-align:left">Montant</th><th style="font-size:.7rem;color:var(--text3);padding:.4rem .6rem;text-align:left">Note</th></tr></thead><tbody>'+paies.map(p=>`<tr><td style="font-size:.78rem;padding:.35rem .6rem">${fDate(p.date)}</td><td style="padding:.35rem .6rem"><span class="badge b-green">${fDA(p.montant)}</span></td><td style="font-size:.78rem;padding:.35rem .6rem;color:var(--text2)">${p.note||'—'}</td></tr>`).join('')+'</tbody></table>';
+  document.getElementById('fiche-body').innerHTML=html;
+  openModal('modal-fiche');
+}
+function ouvrirQR(id){
+  const c=DB.find('clients',id);
+  document.getElementById('qr-modal-nom').textContent=c.nom;
+  currentClientId=id;
+  const data=JSON.stringify({id:c.id,nom:c.nom,tel:c.telephone,app:'ERP_Commercial_Setif'});
+  setTimeout(()=>{
+    QRCode.toCanvas(document.getElementById('qr-modal-canvas'),data,{width:200,margin:2,color:{dark:'#0a0d14',light:'#ffffff'}});
+  },50);
+  openModal('modal-qr');
+}
+function downloadModalQR(){
+  const c=DB.find('clients',currentClientId);
+  const a=document.createElement('a');a.download=`QR_${c.nom.replace(/\s+/g,'_')}.png`;
+  a.href=document.getElementById('qr-modal-canvas').toDataURL();a.click();toast('QR téléchargé !');
+}
+function printModalQR(){
+  const c=DB.find('clients',currentClientId);
+  const img=document.getElementById('qr-modal-canvas').toDataURL();
+  const w=window.open('','_blank');
+  w.document.write(`<html><body style="text-align:center;padding:2rem;font-family:sans-serif"><h2>${c.nom}</h2><p style="color:#888">ID #${String(c.id).padStart(3,'0')}</p><img src="${img}" style="width:200px;display:block;margin:1rem auto"><p style="font-size:.8rem;color:#aaa">ERP Commercial — Sétif</p></body></html>`);
+  w.document.close();w.print();
+}
+function ouvrirPaiement(id){
+  const c=DB.find('clients',id);
+  document.getElementById('p-client-id').value=id;
+  document.getElementById('p-client-nom').value=c.nom;
+  document.getElementById('p-solde').value=fDA(c.solde||0);
+  document.getElementById('p-montant').value='';
+  document.getElementById('p-note').value='';
+  closeModal('modal-fiche');
+  openModal('modal-paiement');
+}
+function validerPaiement(){
+  const id=document.getElementById('p-client-id').value;
+  const m=parseFloat(document.getElementById('p-montant').value);
+  if(!m||m<=0){toast('Montant invalide','err');return;}
+  const res=DB.enregistrerPaiement(id,m,document.getElementById('p-note').value);
+  if(res.error){toast(res.error,'err');return;}
+  closeModal('modal-paiement');toast(`Paiement de ${fDA(m)} enregistré !`);renderClients();
+}
+function exportClients(){
+  const csv=['Nom,Téléphone,Adresse,Wilaya,Solde DA',...DB.get('clients').map(c=>`"${c.nom}","${c.telephone||''}","${c.adresse||''}","${c.wilaya||''}","${c.solde||0}"`)].join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);a.download='clients.csv';a.click();toast('Export CSV effectué !');
+}
+
+// =================== PRODUITS ===================
+function renderProduits(){
+  const q=(document.getElementById('search-prod').value||'').toLowerCase();
+  const f=document.getElementById('filter-stock').value;
+  let prod=DB.get('produits');
+  if(q)prod=prod.filter(p=>p.nom.toLowerCase().includes(q));
+  if(f==='rupture')prod=prod.filter(p=>p.stock_total===0);
+  if(f==='critique')prod=prod.filter(p=>p.stock_total>0&&p.stock_total<=p.stock_minimum);
+  if(f==='ok')prod=prod.filter(p=>p.stock_total>p.stock_minimum);
+
+  const all=DB.get('produits');
+  const rupt=all.filter(p=>p.stock_total===0).length;
+  const crit=all.filter(p=>p.stock_total>0&&p.stock_total<=p.stock_minimum).length;
+  const val=all.reduce((s,p)=>s+p.prix*p.stock_total,0);
+  document.getElementById('prod-kpis').innerHTML=[
+    {ico:'📦',val:all.length,lbl:'Produits',bg:'rgba(79,142,247,.15)',col:'var(--accent)'},
+    {ico:'🚫',val:rupt,lbl:'Ruptures',bg:'rgba(242,95,92,.12)',col:'var(--red)'},
+    {ico:'⚠️',val:crit,lbl:'Stock critique',bg:'rgba(245,166,35,.12)',col:'var(--amber)'},
+    {ico:'💎',val:fDA(val),lbl:'Valeur stock',bg:'rgba(45,212,160,.12)',col:'var(--green)'},
+  ].map(k=>`<div class="kpi-card"><div class="kpi-icon" style="background:${k.bg};color:${k.col}">${k.ico}</div><div><div class="kpi-val" style="color:${k.col}">${k.val}</div><div class="kpi-label">${k.lbl}</div></div></div>`).join('');
+
+  const tbody=document.getElementById('produits-tbody');
+  tbody.innerHTML=prod.map(p=>{
+    let [eb,et]=p.stock_total===0?['b-red','Rupture']:p.stock_total<=p.stock_minimum?['b-amber','Critique']:['b-green','OK'];
+    return`<tr>
+      <td style="font-weight:600;font-size:.86rem">${p.nom}</td>
+      <td><span class="badge b-gray">${p.categorie||'—'}</span></td>
+      <td style="font-weight:600">${fDA(p.prix)}</td>
+      <td style="font-weight:600">${p.stock_total} <span style="font-size:.72rem;color:var(--text3)">${p.unite}</span></td>
+      <td style="color:var(--text2)">${p.stock_minimum}</td>
+      <td><span class="badge ${eb}">${et}</span></td>
+      <td><div style="display:flex;gap:.4rem">
+        <button class="btn btn-ghost btn-sm" onclick="ouvrirStock(${p.id})">📦</button>
+        <button class="btn btn-red btn-sm btn-icon" onclick="if(confirm('Supprimer ?')){DB.delete('produits',${p.id});renderProduits();}">×</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+  if(prod.length===0)tbody.innerHTML='<tr><td colspan="7"><div class="empty"><div class="empty-ico">📦</div>Aucun produit</div></td></tr>';
+
+  // Filter produit select pour stocks clients
+  const sel=document.getElementById('filter-prod-client');
+  sel.innerHTML='<option value="">Tous les produits</option>'+DB.get('produits').map(p=>`<option value="${p.id}">${p.nom}</option>`).join('');
+  renderStockClients();
+}
+function renderStockClients(){
+  const fp=document.getElementById('filter-prod-client').value;
+  let stocks=DB.get('stocks_clients');
+  if(fp)stocks=stocks.filter(s=>s.produit_id===parseInt(fp));
+  const tbody=document.getElementById('stock-clients-tbody');
+  tbody.innerHTML=stocks.map(s=>{
+    const c=DB.find('clients',s.client_id);const p=DB.find('produits',s.produit_id);
+    return`<tr><td style="font-size:.84rem">${c?c.nom:'?'}</td><td style="font-size:.84rem">${p?p.nom:'?'}</td><td><span class="badge ${s.quantite<10?'b-amber':'b-blue'}">${s.quantite}</span></td><td style="font-size:.83rem">${p?fDA(s.quantite*p.prix):'—'}</td></tr>`;
+  }).join('');
+  if(stocks.length===0)tbody.innerHTML='<tr><td colspan="4"><div class="empty">Aucun stock client</div></td></tr>';
+}
+function addProduit(){
+  const nom=document.getElementById('pp-nom').value.trim();
+  const prix=parseFloat(document.getElementById('pp-prix').value);
+  if(!nom||!prix){toast('Nom et prix requis','err');return;}
+  DB.insert('produits',{nom,prix,categorie:document.getElementById('pp-cat').value,unite:document.getElementById('pp-unite').value,stock_total:parseInt(document.getElementById('pp-stock').value)||0,stock_minimum:parseInt(document.getElementById('pp-seuil').value)||20});
+  closeModal('modal-add-prod');toast('Produit créé !');
+  document.getElementById('pp-nom').value='';document.getElementById('pp-prix').value='';
+  renderProduits();
+}
+function ouvrirStock(id){
+  const p=DB.find('produits',id);
+  document.getElementById('ms-id').value=id;
+  document.getElementById('ms-nom').value=p.nom;
+  document.getElementById('ms-actuel').value=p.stock_total+' '+p.unite;
+  document.getElementById('ms-qty').value=0;
+  openModal('modal-stock');
+}
+function modifierStock(){
+  const id=parseInt(document.getElementById('ms-id').value);
+  const op=document.getElementById('ms-op').value;
+  const qty=parseInt(document.getElementById('ms-qty').value);
+  const p=DB.find('produits',id);
+  let nv;
+  if(op==='add')nv=p.stock_total+qty;
+  else if(op==='remove')nv=Math.max(0,p.stock_total-qty);
+  else nv=qty;
+  DB.update('produits',id,{stock_total:nv});
+  closeModal('modal-stock');toast('Stock mis à jour !');renderProduits();
+}
+
+// =================== LIVRAISONS ===================
+function renderLivraisons(){
+  const cam=DB.get('camions');
+  const charg=DB.get('chargements');
+  const grid=document.getElementById('camions-grid');
+  grid.innerHTML=cam.map(c=>{
+    const today_ch=charg.filter(ch=>ch.camion_id===c.id&&ch.date===td());
+    const sb=c.statut==='en_route'?'b-blue':c.statut==='terminé'?'b-green':'b-gray';
+    const sl=c.statut==='en_route'?'En route':c.statut==='terminé'?'Terminé':'Disponible';
+    const btn=c.statut==='disponible'
+      ?`<button class="btn btn-primary btn-sm" onclick="DB.update('camions',${c.id},{statut:'en_route'});renderLivraisons()">▶ Démarrer</button>`
+      :c.statut==='en_route'
+      ?`<button class="btn btn-green btn-sm" onclick="DB.update('camions',${c.id},{statut:'terminé'});renderLivraisons()">✅ Terminer</button>`
+      :`<button class="btn btn-ghost btn-sm" onclick="DB.update('camions',${c.id},{statut:'disponible'});renderLivraisons()">🔄 Reset</button>`;
+    return`<div class="card">
+      <div class="card-head"><h3>🚚 ${c.nom}</h3><span class="badge ${sb}">${sl}</span></div>
+      <div style="padding:.9rem 1.2rem;font-size:.84rem;color:var(--text2);line-height:2">
+        <div>👤 <span style="color:var(--text);font-weight:500">${c.chauffeur}</span></div>
+        <div>📞 ${c.telephone||'—'}</div>
+        <div>🏷️ ${c.immatriculation||'—'}</div>
+        <div>📦 Chargements aujourd'hui : <strong style="color:var(--text)">${today_ch.length}</strong></div>
+      </div>
+      <div style="padding:.6rem 1.2rem 1rem;display:flex;gap:.5rem">${btn}<button class="btn btn-red btn-sm btn-icon" onclick="if(confirm('Supprimer ?')){DB.delete('camions',${c.id});renderLivraisons();}">×</button></div>
+    </div>`;
+  }).join('');
+  if(cam.length===0)grid.innerHTML='<div class="empty"><div class="empty-ico">🚚</div>Aucun camion</div>';
+
+  // Selects chargement
+  document.getElementById('charg-camion').innerHTML=cam.map(c=>`<option value="${c.id}">${c.nom} — ${c.chauffeur}</option>`).join('');
+  const prodSel=document.getElementById('charg-produit');
+  prodSel.innerHTML=DB.get('produits').map(p=>`<option value="${p.id}" data-stock="${p.stock_total}">${p.nom} (dispo: ${p.stock_total})</option>`).join('');
+  updateChargMax();
+
+  // Historique
+  const tbody=document.getElementById('chargements-tbody');
+  const ch=DB.get('chargements').slice().reverse();
+  tbody.innerHTML=ch.map(c=>{
+    const cam2=DB.find('camions',c.camion_id);const p=DB.find('produits',c.produit_id);
+    const reste=c.quantite-(c.livree||0);
+    return`<tr>
+      <td style="font-size:.83rem">${cam2?cam2.nom:'?'}</td>
+      <td style="font-size:.83rem">${p?p.nom:'?'}</td>
+      <td style="font-weight:600">${c.quantite}</td>
+      <td><span class="badge b-green">${c.livree||0}</span></td>
+      <td><span class="badge ${reste>0?'b-amber':'b-green'}">${reste}</span></td>
+      <td style="font-size:.78rem;color:var(--text3)">${fDate(c.date)}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="marquerLivre(${c.id})">+Livré</button></td>
+    </tr>`;
+  }).join('');
+  if(ch.length===0)tbody.innerHTML='<tr><td colspan="7"><div class="empty">Aucun chargement</div></td></tr>';
+}
+function updateChargMax(){
+  const sel=document.getElementById('charg-produit');
+  const opt=sel?sel.options[sel.selectedIndex]:null;
+  if(opt)document.getElementById('charg-dispo').textContent='(dispo: '+opt.dataset.stock+')';
+}
+function ajouterChargement(){
+  const cid=parseInt(document.getElementById('charg-camion').value);
+  const pid=parseInt(document.getElementById('charg-produit').value);
+  const qty=parseInt(document.getElementById('charg-qty').value);
+  const p=DB.find('produits',pid);
+  if(!qty||qty<=0){toast('Quantité invalide','err');return;}
+  if(p.stock_total<qty){toast(`Stock insuffisant (${p.stock_total})`, 'err');return;}
+  DB.insert('chargements',{camion_id:cid,produit_id:pid,quantite:qty,date:td(),livree:0});
+  DB.update('produits',pid,{stock_total:p.stock_total-qty});
+  toast('Chargement ajouté !');renderLivraisons();
+}
+function marquerLivre(id){
+  const ch=DB.find('chargements',id);
+  const max=ch.quantite-(ch.livree||0);
+  if(max<=0){toast('Tout déjà livré','err');return;}
+  const n=prompt(`Combien livré ? (max ${max})`,max);
+  if(!n)return;
+  DB.update('chargements',id,{livree:(ch.livree||0)+Math.min(parseInt(n),max)});
+  toast('Livraison enregistrée !');renderLivraisons();
+}
+function addCamion(){
+  const nom=document.getElementById('cc-nom').value.trim();
+  const chauf=document.getElementById('cc-chauf').value.trim();
+  if(!nom||!chauf){toast('Nom et chauffeur requis','err');return;}
+  DB.insert('camions',{nom,chauffeur:chauf,immatriculation:document.getElementById('cc-immat').value,telephone:document.getElementById('cc-tel').value,capacite:parseInt(document.getElementById('cc-cap').value)||800,statut:'disponible'});
+  closeModal('modal-add-camion');toast('Camion ajouté !');
+  ['cc-nom','cc-chauf','cc-immat','cc-tel'].forEach(id=>document.getElementById(id).value='');
+  renderLivraisons();
+}
+
+// =================== VENTES ===================
+function renderVentesPage(){
+  const v=DB.get('ventes');
+  const tot_today=DB.ventesToday();
+  const tot_all=v.reduce((s,x)=>s+x.quantite*x.prix_unitaire,0);
+  const creances=DB.get('clients').reduce((s,c)=>s+(c.solde||0),0);
+  document.getElementById('ventes-kpis').innerHTML=[
+    {ico:'📅',val:fDA(tot_today),lbl:"Aujourd'hui",bg:'rgba(45,212,160,.12)',col:'var(--green)'},
+    {ico:'💰',val:fDA(tot_all),lbl:'Total ventes',bg:'rgba(79,142,247,.12)',col:'var(--accent)'},
+    {ico:'🧾',val:v.length,lbl:'Transactions',bg:'rgba(245,166,35,.12)',col:'var(--amber)'},
+    {ico:'📋',val:fDA(creances),lbl:'Créances',bg:'rgba(242,95,92,.12)',col:'var(--red)'},
+  ].map(k=>`<div class="kpi-card"><div class="kpi-icon" style="background:${k.bg};color:${k.col}">${k.ico}</div><div><div class="kpi-val" style="color:${k.col}">${k.val}</div><div class="kpi-label">${k.lbl}</div></div></div>`).join('');
+
+  // Populate filters
+  document.getElementById('fv-client').innerHTML='<option value="">Tous</option>'+DB.get('clients').map(c=>`<option value="${c.id}">${c.nom}</option>`).join('');
+  document.getElementById('fv-produit').innerHTML='<option value="">Tous</option>'+DB.get('produits').map(p=>`<option value="${p.id}">${p.nom}</option>`).join('');
+
+  // Populate modal vente
+  document.getElementById('mv-client').innerHTML=DB.get('clients').map(c=>`<option value="${c.id}">${c.nom}</option>`).join('');
+  document.getElementById('mv-produit').innerHTML=DB.get('produits').filter(p=>p.stock_total>0).map(p=>`<option value="${p.id}" data-prix="${p.prix}">${p.nom} — stock: ${p.stock_total}</option>`).join('');
+  updateMV();
+
+  renderVentes();
+  renderResume();
+}
+function renderVentes(){
+  let v=DB.get('ventes').slice().reverse();
+  const fc=document.getElementById('fv-client').value;
+  const fp=document.getElementById('fv-produit').value;
+  const d1=document.getElementById('fv-d1').value;
+  const d2=document.getElementById('fv-d2').value;
+  if(fc)v=v.filter(x=>x.client_id===parseInt(fc));
+  if(fp)v=v.filter(x=>x.produit_id===parseInt(fp));
+  if(d1)v=v.filter(x=>x.date>=d1);
+  if(d2)v=v.filter(x=>x.date<=d2);
+  document.getElementById('ventes-count').textContent=v.length;
+  document.getElementById('ventes-total-f').textContent='Total : '+fDA(v.reduce((s,x)=>s+x.quantite*x.prix_unitaire,0));
+  const tbody=document.getElementById('ventes-tbody');
+  tbody.innerHTML=v.map(x=>{
+    const c=DB.find('clients',x.client_id);const p=DB.find('produits',x.produit_id);
+    return`<tr><td style="font-size:.78rem">${fDate(x.date)}</td><td style="font-size:.82rem">${c?c.nom:'?'}</td><td style="font-size:.82rem">${p?p.nom:'?'}</td><td>${x.quantite}</td><td style="font-size:.8rem">${fDA(x.prix_unitaire)}</td><td><span class="badge b-green">${fDA(x.quantite*x.prix_unitaire)}</span></td><td style="font-size:.78rem;color:var(--text2)">${x.vendeur||'—'}</td><td><button class="btn btn-red btn-sm btn-icon" onclick="if(confirm('Supprimer ?')){DB.delete('ventes',${x.id});renderVentesPage();}">×</button></td></tr>`;
+  }).join('');
+  if(v.length===0)tbody.innerHTML='<tr><td colspan="8"><div class="empty">Aucune vente</div></td></tr>';
+}
+function renderResume(){
+  const tbody=document.getElementById('resume-tbody');
+  const ventes=DB.get('ventes');
+  tbody.innerHTML=DB.get('clients').map(c=>{
+    const cv=ventes.filter(v=>v.client_id===c.id);
+    const tot=cv.reduce((s,v)=>s+v.quantite*v.prix_unitaire,0);
+    return`<tr><td style="font-size:.84rem;font-weight:500">${c.nom}</td><td>${cv.length}</td><td><span class="badge b-blue">${fDA(tot)}</span></td><td>${c.solde>0?`<span class="badge b-red">${fDA(c.solde)}</span>`:'<span class="badge b-green">À jour</span>'}</td></tr>`;
+  }).join('');
+}
+function updateMV(){
+  const sel=document.getElementById('mv-produit');const opt=sel?sel.options[sel.selectedIndex]:null;
+  const prix=opt?parseFloat(opt.dataset.prix):0;const qty=parseInt(document.getElementById('mv-qty').value)||0;
+  document.getElementById('mv-prix').value=fDA(prix);document.getElementById('mv-total').value=fDA(prix*qty);
+}
+function validerVente(){
+  const cid=document.getElementById('mv-client').value;const pid=document.getElementById('mv-produit').value;
+  const qty=parseInt(document.getElementById('mv-qty').value);const vendeur=document.getElementById('mv-vendeur').value||'Admin';
+  if(!cid||!pid||!qty||qty<=0){toast('Remplissez tous les champs','err');return;}
+  const res=DB.ajouterVente(cid,pid,qty,vendeur);
+  if(res.error){toast(res.error,'err');return;}
+  closeModal('modal-vente');toast('Vente enregistrée : '+fDA(res.montant));renderVentesPage();
+}
+function prefillVenteClient(id){
+  const sel=document.getElementById('mv-client');if(sel){sel.value=id;}
+}
+function resetFiltresV(){
+  ['fv-client','fv-produit'].forEach(id=>document.getElementById(id).value='');
+  ['fv-d1','fv-d2'].forEach(id=>document.getElementById(id).value='');
+  renderVentes();
+}
+function exportVentes(){
+  const csv=['Date,Client,Produit,Quantité,Prix,Total,Vendeur',...DB.get('ventes').map(v=>{const c=DB.find('clients',v.client_id);const p=DB.find('produits',v.produit_id);return`"${fDate(v.date)}","${c?c.nom:'?'}","${p?p.nom:'?'}","${v.quantite}","${v.prix_unitaire}","${v.quantite*v.prix_unitaire}","${v.vendeur||''}"`;})].join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);a.download='ventes.csv';a.click();toast('Export CSV !');
+}
+
+// =================== SCANNER ===================
+function switchTab(id){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+function startScanner(){
+  document.getElementById('btn-start-scan').style.display='none';
+  document.getElementById('btn-stop-scan').style.display='inline-flex';
+  scannerInst=new Html5Qrcode('reader');
+  scannerInst.start({facingMode:'environment'},{fps:10,qrbox:{width:220,height:220}},onScan,()=>{})
+    .catch(err=>{toast('Caméra non dispo','err');document.getElementById('btn-start-scan').style.display='inline-flex';document.getElementById('btn-stop-scan').style.display='none';});
+}
+function stopScanner(){
+  if(scannerInst)scannerInst.stop().then(()=>{scannerInst=null;document.getElementById('btn-start-scan').style.display='inline-flex';document.getElementById('btn-stop-scan').style.display='none';});
+}
+function onScan(text){
+  stopScanner();
+  let data;
+  try{data=JSON.parse(text);}catch(e){showScanResult(null,text);return;}
+  if(data.id){const c=DB.find('clients',data.id);showScanResult(c,text);}
+  else showScanResult(null,text);
+}
+function showScanResult(client,raw){
+  const area=document.getElementById('scan-result');
+  if(!client){
+    area.innerHTML=`<div style="background:rgba(242,95,92,.1);border:1px solid rgba(242,95,92,.3);border-radius:var(--radius-sm);padding:1rem"><div style="font-weight:600;color:var(--red);margin-bottom:.3rem">❓ QR non reconnu</div><div style="font-size:.78rem;color:var(--text2);word-break:break-all">${raw}</div></div>`;
+    return;
+  }
+  scannedClientId=client.id;
+  const stocks=DB.getStockClient(client.id);
+  const [abg,acol]=avColors(client.id);
+  let sHtml=stocks.length?stocks.map(s=>`<div style="display:flex;justify-content:space-between;padding:.35rem 0;border-bottom:1px solid var(--border);font-size:.8rem"><span>${s.produit?s.produit.nom:'?'}</span><span class="badge ${s.quantite<10?'b-amber':'b-green'}">${s.quantite}</span></div>`).join(''):'<p style="font-size:.78rem;color:var(--text3)">Aucun stock</p>';
+  area.innerHTML=`<div class="client-scan-result">
+    <div style="display:flex;align-items:center;gap:.7rem;margin-bottom:.8rem">
+      <div class="avatar" style="width:40px;height:40px;font-size:.9rem;background:${abg};color:${acol}">${initials(client.nom)}</div>
+      <div><div style="font-weight:700;font-size:.9rem">${client.nom}</div>
+      <div style="font-size:.76rem;color:var(--text2)">📞 ${client.telephone||'—'}</div>
+      ${client.solde>0?`<span class="badge b-red" style="margin-top:.2rem">Doit : ${fDA(client.solde)}</span>`:'<span class="badge b-green" style="margin-top:.2rem">À jour</span>'}
+      </div>
+    </div>
+    <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:.4rem">Stock actuel</div>
+    ${sHtml}
+    <button class="btn btn-primary" style="width:100%;margin-top:.8rem" onclick="ouvrirVenteRapide(${client.id})">🛒 Ajouter une vente</button>
+  </div>`;
+}
+function ouvrirVenteRapide(cid){
+  const c=DB.find('clients',cid);scannedClientId=cid;
+  document.getElementById('vr-client-name').textContent=c.nom;
+  const sel=document.getElementById('vr-produit');
+  sel.innerHTML=DB.get('produits').filter(p=>p.stock_total>0).map(p=>`<option value="${p.id}" data-prix="${p.prix}">${p.nom} — stock: ${p.stock_total}</option>`).join('');
+  updateVR();
+  document.getElementById('vente-rapide-wrap').style.display='block';
+  document.getElementById('vente-rapide-wrap').scrollIntoView({behavior:'smooth'});
+}
+function updateVR(){
+  const sel=document.getElementById('vr-produit');const opt=sel?sel.options[sel.selectedIndex]:null;
+  const prix=opt?parseFloat(opt.dataset.prix):0;const qty=parseInt(document.getElementById('vr-qty').value)||0;
+  document.getElementById('vr-prix').value=fDA(prix);document.getElementById('vr-total').value=fDA(prix*qty);
+}
+function validerVR(){
+  if(!scannedClientId){toast('Aucun client','err');return;}
+  const pid=document.getElementById('vr-produit').value;const qty=parseInt(document.getElementById('vr-qty').value);
+  if(!qty||qty<=0){toast('Quantité invalide','err');return;}
+  const res=DB.ajouterVente(scannedClientId,pid,qty);
+  if(res.error){toast(res.error,'err');return;}
+  toast('✅ Vente : '+fDA(res.montant));
+  document.getElementById('vente-rapide-wrap').style.display='none';scannedClientId=null;
+}
+
+// GENERATE QR
+function populateGenSel(){
+  document.getElementById('gen-client').innerHTML='<option value="">— Choisir —</option>'+DB.get('clients').map(c=>`<option value="${c.id}">${c.nom}</option>`).join('');
+}
+function genFromClient(){
+  const id=document.getElementById('gen-client').value;if(!id)return;
+  const c=DB.find('clients',id);genClientNom=c.nom;
+  document.getElementById('gen-text').value=JSON.stringify({id:c.id,nom:c.nom,tel:c.telephone,app:'ERP_Commercial_Setif'});
+  genQRPreview();
+}
+function genQRPreview(){
+  const t=document.getElementById('gen-text').value.trim();if(!t)return;
+  const size=parseInt(document.getElementById('gen-size').value);
+  const color=document.getElementById('gen-color').value;
+  const out=document.getElementById('gen-preview');
+  out.innerHTML='<canvas id="gen-canvas"></canvas>';
+  QRCode.toCanvas(document.getElementById('gen-canvas'),t,{width:size,margin:2,color:{dark:color,light:'#ffffff'}},()=>{
+    genCanvas=document.getElementById('gen-canvas');
+    document.getElementById('btn-dl-qr').style.display='inline-flex';
+    document.getElementById('btn-print-qr').style.display='inline-flex';
+  });
+}
+function downloadGenQR(){
+  if(!genCanvas)return;const a=document.createElement('a');
+  a.download=`QR_${genClientNom||'code'}.png`;a.href=genCanvas.toDataURL();a.click();toast('QR téléchargé !');
+}
+function printGenQR(){
+  if(!genCanvas)return;const nom=genClientNom||document.getElementById('gen-text').value;
+  const w=window.open('','_blank');
+  w.document.write(`<html><body style="text-align:center;padding:2rem;font-family:sans-serif"><h2>${nom}</h2><img src="${genCanvas.toDataURL()}" style="width:200px;display:block;margin:1rem auto"><p style="font-size:.8rem;color:#aaa">ERP Commercial — Sétif</p></body></html>`);
+  w.document.close();w.print();
+}
+
+// ALL QR
+function renderAllQR(){
+  const grid=document.getElementById('all-qr-grid');grid.innerHTML='';
+  DB.get('clients').forEach(c=>{
+    const div=document.createElement('div');div.className='qr-card';
+    const canvas=document.createElement('canvas');canvas.id='qrc-'+c.id;
+    const nom=document.createElement('div');nom.style.cssText='font-size:.78rem;font-weight:600;margin-top:.4rem;color:var(--text)';nom.textContent=c.nom;
+    const idEl=document.createElement('div');idEl.style.cssText='font-size:.68rem;color:var(--text3)';idEl.textContent='#'+String(c.id).padStart(3,'0');
+    const btn=document.createElement('button');btn.className='btn btn-ghost btn-sm';btn.style.marginTop='.4rem';btn.textContent='💾';
+    btn.onclick=()=>{const a=document.createElement('a');a.download=`QR_${c.nom.replace(/\s+/g,'_')}.png`;a.href=canvas.toDataURL();a.click();};
+    div.append(canvas,nom,idEl,btn);grid.appendChild(div);
+    const data=JSON.stringify({id:c.id,nom:c.nom,tel:c.telephone,app:'ERP_Commercial_Setif'});
+    QRCode.toCanvas(canvas,data,{width:100,margin:1,color:{dark:'#0a0d14',light:'#ffffff'}});
+  });
+}
+function printAllQR(){
+  const clients=DB.get('clients');const w=window.open('','_blank');
+  let imgs='';
+  clients.forEach(c=>{
+    const canvas=document.getElementById('qrc-'+c.id);
+    if(canvas)imgs+=`<div style="display:inline-block;text-align:center;margin:8px;padding:10px;border:1px solid #e8eaf0;border-radius:8px"><img src="${canvas.toDataURL()}" style="width:110px;display:block"><div style="font-size:.78rem;font-weight:600;margin-top:.2rem">${c.nom}</div><div style="font-size:.68rem;color:#aaa">#${String(c.id).padStart(3,'0')}</div></div>`;
+  });
+  w.document.write(`<html><body style="padding:1rem;font-family:sans-serif"><h2>QR Codes clients — ERP Sétif</h2>${imgs}</body></html>`);
+  w.document.close();w.print();
+}
+
+// =================== INIT ===================
+DB.init();
+document.getElementById('today-date').textContent=new Date().toLocaleDateString('fr-DZ',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+setTimeout(()=>{
+  document.getElementById('loading').style.opacity='0';
+  document.getElementById('loading').style.transition='opacity .5s ease';
+  setTimeout(()=>{
+    document.getElementById('loading').style.display='none';
+    document.getElementById('app').style.display='flex';
+    renderDashboard();
+  },500);
+},1600);
+</script>
+</body>
+</html>
